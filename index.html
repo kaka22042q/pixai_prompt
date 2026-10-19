@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>角色 LoRA 素材工作台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f2f9;--card:#fff;--ink:#1c2038;--mute:#626a8a;--line:#d9dcee;--acc:#4457d6;--acc-ink:#fff;--chip:#f4f5fb;--ok:#1f8a5b;--warn:#b4590a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#13172b;--card:#1c2240;--ink:#e8ebf8;--mute:#98a1c6;--line:#2f3862;--acc:#8b9bff;--acc-ink:#12183a;--chip:#252c4f;--ok:#5fd6a0;--warn:#f0a35e}}
+:root[data-theme="dark"]{--bg:#13172b;--card:#1c2240;--ink:#e8ebf8;--mute:#98a1c6;--line:#2f3862;--acc:#8b9bff;--acc-ink:#12183a;--chip:#252c4f;--ok:#5fd6a0;--warn:#f0a35e}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 60px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.6 "Noto Sans TC",system-ui,-apple-system,"PingFang TC","Microsoft JhengHei",sans-serif}
+main{max-width:720px;margin:0 auto;padding:16px 16px 40px}
+h1{font-size:21px;line-height:1.3;margin:2px 0 12px;font-weight:700}
+.seg{position:sticky;top:env(safe-area-inset-top,0px);z-index:6;display:flex;gap:6px;background:var(--bg);padding:6px 0 10px}
+.seg button{flex:1;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:9px;font:inherit;font-weight:500;cursor:pointer}
+.seg button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:14px}
+h2{font-size:16px;margin:0;font-weight:700}
+.sub{color:var(--mute);margin:4px 0 0;font-size:14px}
+label.f{display:block;font-size:13px;color:var(--mute);margin:10px 0 4px}
+input[type=text],textarea{width:100%;border:1px solid var(--line);border-radius:10px;background:var(--chip);color:var(--ink);padding:9px 10px;font:inherit;font-size:14px}
+textarea{min-height:60px;resize:vertical;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.5}
+input:focus,textarea:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;padding:8px 13px;font:inherit;font-size:14px;font-weight:500;cursor:pointer;flex:none}
+.btn.main{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.row{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:6px;overflow-x:auto;padding:8px 0;-webkit-overflow-scrolling:touch}
+.tab{flex:none;border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:999px;padding:5px 12px;font:inherit;font-size:14px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab b{margin-left:4px;color:var(--acc)}.tab[aria-selected="true"] b{color:var(--bg)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);background:var(--chip);color:var(--ink);border-radius:10px;padding:6px 10px;font:inherit;text-align:left;cursor:pointer;line-height:1.3}
+.chip small{display:block;color:var(--mute);font-size:12px}
+.chip[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.chip[aria-pressed="true"] small{color:inherit;opacity:.85}
+.chip.x{padding:4px 10px}
+.warn{color:var(--warn);font-size:14px;margin:8px 0 0}
+.top{position:sticky;top:calc(env(safe-area-inset-top,0px) + 52px);z-index:5;background:var(--bg);padding:4px 0 10px}
+.cnt{display:flex;justify-content:space-between;font-size:14px;font-weight:500;margin-bottom:6px}
+.bar{height:10px;border-radius:99px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--ok)}
+.bh{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.bh span{font-size:13px;color:var(--mute)}
+.item{display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.item input{width:22px;height:22px;flex:none;accent-color:var(--acc)}
+.item .tx{flex:1;min-width:0}.item b{font-weight:500;display:block}
+.item small{display:block;color:var(--mute);font-size:12px;overflow-wrap:anywhere}
+.item.done b{text-decoration:line-through;color:var(--mute)}
+.rules{font-size:14px;color:var(--mute);margin:6px 0 0;padding-left:18px}.rules li{margin:3px 0}
+.pkw{margin-top:8px}#pk1 .q,.pkw .q{margin:2px 0 6px}#pk1 .chips,.pkw .chips{max-height:44vh;overflow-y:auto}[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<h1>角色 LoRA 素材工作台</h1>
+<div class="seg" role="tablist"><button id="s1" role="tab" aria-selected="true">1. 設定角色</button><button id="s2" role="tab" aria-selected="false">2. 素材清單</button></div>
+
+<div id="p1">
+<section>
+<h2>角色名稱</h2>
+<input type="text" id="name" placeholder="例如：粉髮男孩" aria-label="角色名稱">
+</section>
+<section>
+<h2>角色特徵</h2>
+<p class="sub">只選角色本身的外觀和風格，姿勢與構圖交給清單。</p>
+<div id="pk1"></div>
+<p class="warn" id="wn" hidden>厚塗和平塗／賽璐璐的詞會互相拉扯，建議只留一種。</p>
+</section>
+<section>
+<h2>自訂標籤</h2>
+<div class="row" style="margin-top:8px"><input type="text" id="cu" placeholder="輸入英文標籤，例如 mole under eye" aria-label="自訂標籤" style="flex:1;width:auto"><button class="btn" id="add">加入</button></div>
+<div class="chips" id="cus" style="margin-top:10px"></div>
+</section>
+<section>
+<h2>固定描述</h2>
+<label class="f" for="dv">由上面的選擇自動組成</label>
+<textarea id="dv" readonly style="min-height:90px"></textarea>
+<p class="warn" id="cf1" hidden></p>
+<div class="row"><button class="btn" id="cpd">複製描述</button><button class="btn main" id="go">開始素材清單</button></div>
+<div class="row" style="margin-top:6px"><button class="btn" id="clrsel">清空所有選擇</button></div>
+</section>
+</div>
+
+<div id="p2" hidden>
+<div class="top"><div class="cnt"><span id="nm">總進度</span><span id="tot">0 / 30</span></div><div class="bar"><i id="fill"></i></div></div>
+<section><h2>固定描述</h2><p class="sub" id="dprev" style="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;overflow-wrap:anywhere"></p><div class="row" style="margin-top:8px"><button class="btn" id="back">回去修改角色</button></div></section>
+<div id="batches"></div>
+<section><h2>負面 Prompt</h2><p class="sub">每張共用，生成時貼到負面欄。</p><textarea id="neg" aria-label="負面 prompt" style="margin-top:8px"></textarea><p class="warn" id="cf2" hidden></p><div class="row"><button class="btn main" id="cpn">複製負面</button><button class="btn" id="tgn">＋ 從詞庫加入</button></div><div class="pkw" id="pk3" hidden></div></section>
+<section>
+<h2>挑圖與比例提醒</h2>
+<ul class="rules">
+<li>特寫約 45%、半身約 35%、全身約 20%。</li>
+<li>同一套服裝、背景、姿勢，最多出現 3～4 次。</li>
+<li>臉明顯不像、髮色偏掉、手遮住臉的圖直接淘汰。</li>
+<li>建議多生成到 45～50 張，再挑出 30 張。</li>
+</ul>
+</section>
+<section>
+<h2>新角色？</h2>
+<p class="sub">清空打勾後，回到「設定角色」改特徵，就能重新開始。</p>
+<div class="row"><button class="btn" id="reset">清空打勾</button></div>
+<p class="sub" style="font-size:13px">進度只存在這台裝置的這個瀏覽器，換裝置不會同步。</p>
+</section>
+</div>
+</main>
+
+<script>
+var G1=[["品質畫風",[["masterpiece","傑作"],["best quality","最佳品質"],["highres","高解析"],["ultra-detailed","超精細"],["sharp focus","清晰對焦"],["absurdres","高解析度相關標籤"],["accurate perspective","正確透視"],["anime illustration","動漫插畫"],["balanced proportions","平衡的比例"],["beautiful color palette","漂亮配色"],["cel shading","賽璐璐上色"],["cinematic lighting","電影感光線"],["clean lineart","乾淨線稿"],["clean polished rendering","乾淨精修的渲染"],["clear facial features","清楚的五官"],["clear subject separation","主體與背景清楚分離"],["coherent anatomy","合理一致的人體結構"],["consistent character design","一致的角色設計"],["consistent lighting","一致的光線"],["crisp details","俐落細節"],["delicate linework","細膩線條"],["depth of field","景深效果"],["detailed coloring","細緻上色"],["gradient coloring","漸層上色"],["high detail","高細節"],["high-resolution illustration","高解析度插畫"],["highly detailed","豐富細節"],["Japanese anime style","日系動漫風格"],["natural body proportions","自然身材比例"],["natural finger positions","自然的手指位置"],["newest","新版風格相關標籤"],["professional illustration","專業插畫"],["refined details","精修細節"],["smooth gradients","平滑漸層"],["smooth lineart","平滑線條"],["soft shading","柔和陰影"],["well-defined silhouette","清楚的外輪廓"],["well-drawn hands","繪製良好的手部"]]],["人物外貌",[["1boy","男孩"],["1girl","女孩"],["solo","單人"],["mature female","成熟女性"],["chibi","Q版"],["elf","精靈"],["cat ears","貓耳"],["fox ears","狐耳"],["horns","角"],["tail","尾巴"],["pale skin","白皙膚色"],["tan skin","小麥膚色"],["freckles","雀斑"],["mole under eye","眼下痣"],["slim","纖瘦"],["muscular","肌肉"],["tall","高挑"],["androgynous","中性"],["adult man","成年男性"],["adult woman","成年女性"],["animal ears","獸耳"],["beauty mark","魅力痣"],["broad shoulders","寬肩"],["defined muscles","明顯肌肉線條"],["delicate hands","細緻的手"],["earrings","耳環"],["elegant posture","優雅姿態"],["fluffy fox tail","蓬鬆狐尾"],["glasses","眼鏡"],["long legs","長腿"],["narrow shoulders","窄肩"],["pointed ears","尖耳"],["slender figure","修長身形"],["slim body","苗條身材"],["young adult","青年"]]],["髮型",[["short hair","短髮"],["medium hair","中長髮"],["long hair","長髮"],["messy hair","凌亂髮"],["wavy hair","波浪捲"],["straight hair","直髮"],["bangs","瀏海"],["parted bangs","旁分瀏海"],["longer hair at nape","後頸髮尾較長"],["ahoge","呆毛"],["twintails","雙馬尾"],["ponytail","馬尾"],["braid","辮子"],["ash gray hair","灰髮"],["asymmetrical haircut","不對稱髮型"],["black hair","黑髮"],["blonde hair","金髮"],["blunt bangs","齊瀏海"],["bob cut","鮑伯短髮"],["braided hair","編髮"],["bun hairstyle","包頭"],["curly hair","捲髮"],["curtain bangs","窗簾瀏海"],["detailed hair strands","細節豐富的髮絲"],["double buns","雙丸子頭"],["fine hair strands","細緻髮絲"],["fluffy hair","蓬鬆髮型"],["hair covering one eye","頭髮遮住一隻眼睛"],["hair ornament","髮飾"],["hairpin","髮夾"],["half-up hairstyle","半頭綁髮"],["headband","髮箍"],["high ponytail","高馬尾"],["layered hair","層次髮型"],["loose hair","自然披髮"],["low ponytail","低馬尾"],["messy bun","凌亂包頭"],["middle-parted hair","中分頭"],["pixie cut","精靈短髮"],["red hair","紅髮"],["shaggy hair","層次凌亂髮"],["side braid","側辮"],["side ponytail","側馬尾"],["side-parted hair","側分頭"],["silky hair","絲滑髮絲"],["silver hair","銀髮"],["single braid","單辮子"],["slicked-back hair","往後梳的頭髮"],["slightly messy hair","微亂髮"],["soft flowing hair","柔順飄逸髮絲"],["spiky hair","尖刺髮型"],["split bangs","中分瀏海"],["undercut hairstyle","側邊削短髮型"],["white hair","白髮"],["wind-blown hair","被風吹起的頭髮"],["wispy bangs","輕薄碎瀏海"],["wolf cut","狼尾剪裁"]]],["髮色眼睛",[["pastel pink hair","粉彩粉髮"],["pink hair","粉髮"],["silver hair","銀髮"],["black hair","黑髮"],["blonde hair","金髮"],["brown hair","棕髮"],["white hair","白髮"],["blue hair","藍髮"],["red hair","紅髮"],["purple hair","紫髮"],["grey eyes","灰眼"],["blue eyes","藍眼"],["red eyes","紅眼"],["green eyes","綠眼"],["purple eyes","紫眼"],["golden eyes","金眼"],["brown eyes","棕眼"],["half-closed eyes","半垂眼"],["sharp eyes","銳利眼"],["droopy eyes","下垂眼"],["long eyelashes","長睫毛"],["ash blonde hair","灰金髮"],["auburn hair","赤褐髮"],["burgundy hair","酒紅髮"],["colored inner hair","內層染色"],["crimson eyes","深紅眼"],["dark blue eyes","深藍眼"],["dark brown eyes","深棕眼"],["dark brown hair","深棕髮"],["emerald eyes","祖母綠眼睛"],["gradient hair","漸層髮色"],["gray eyes","灰眼"],["hazel eyes","榛色眼睛"],["lavender eyes","薰衣草紫眼"],["lavender hair","薰衣草紫髮"],["light blue eyes","淺藍眼"],["light brown hair","淺棕髮"],["navy blue hair","深藍髮"],["peach hair","蜜桃色頭髮"],["platinum blonde hair","鉑金金髮"],["silver eyes","銀灰眼"],["teal hair","藍綠髮"],["two-tone hair","雙色頭髮"]]],["臉部",[["arched eyebrows","弧形眉"],["beautiful detailed eyes","精緻漂亮的眼睛"],["cool skin tone","冷色膚調"],["defined jawline","輪廓分明的下顎線"],["defined lips","輪廓清楚的嘴唇"],["delicate eyelashes","細緻睫毛"],["delicate facial features","精緻五官"],["detailed irises","細緻虹膜"],["downturned eyes","眼尾下垂的眼型"],["expressive eyes","富有表現力的眼睛"],["flushed cheeks","泛紅臉頰"],["full lips","豐滿嘴唇"],["glassy eyes","透亮的眼睛"],["glossy lips","水潤嘴唇"],["half-lidded eyes","半瞇眼"],["high cheekbones","高顴骨"],["light makeup","淡妝"],["long eyelashes","長睫毛"],["matte lips","霧面嘴唇"],["monolid","單眼皮"],["narrow eyes","細長眼型"],["natural eyebrows","自然眉型"],["natural facial proportions","自然五官比例"],["natural lip color","自然唇色"],["natural makeup","自然妝感"],["pale complexion","白皙膚色"],["pink blush","粉色腮紅"],["sharp eyes","銳利眼神"],["sharp jawline","銳利下顎線"],["shiny eyes","有光澤的眼睛"],["small nose","小巧鼻子"],["smoky eye makeup","煙燻眼妝"],["smooth skin","平滑肌膚"],["soft eyes","柔和眼神"],["soft facial features","柔和的五官"],["soft facial shading","臉部柔和陰影"],["softly rendered lips","柔和筆觸的嘴唇"],["straight nose","挺直鼻型"],["subtle blush","淡淡臉紅"],["subtle eye highlights","細微眼睛高光"],["thick eyebrows","濃眉"],["thin lips","薄唇"],["under-eye shadows","眼下陰影"],["upturned eyes","眼尾上揚的眼型"],["warm skin tone","暖色膚調"],["winged eyeliner","上揚眼線"]]],["配件",[["stud earrings","耳釘"],["hoop earrings","耳環"],["silver necklace","銀項鍊"],["glasses","眼鏡"],["choker","頸鍊"],["hair ornament","髮飾"],["hairclip","髮夾"],["ribbon","緞帶"],["headphones","耳機"],["ring","戒指"]]],["風格",[["painterly","厚塗"],["soft shading","柔和陰影"],["detailed face","臉部細節"],["detailed eyes","眼睛細節"],["realistic lighting","寫實光影"],["pastel colors","粉彩色"],["flat color","平塗"],["cel shading","賽璐璐"],["clean lineart","乾淨線稿"],["watercolor","水彩"]]]];
+var G2=[["服裝",[["accessories","配件"],["ankle boots","踝靴"],["black trousers","黑色長褲"],["bomber jacket","飛行外套"],["bow tie","領結"],["cardigan","開襟毛衣"],["cargo pants","工作褲"],["casual clothing","休閒服裝"],["crossbody bag","斜背包"],["denim jacket","牛仔外套"],["detailed fabric texture","細緻布料質感"],["dress shirt","正式襯衫"],["embroidered details","刺繡細節"],["fabric folds","布料皺褶"],["fingerless gloves","露指手套"],["formal wear","正式服裝"],["hoodie","帽T"],["jeans","牛仔褲"],["knee-high boots","膝下長靴"],["knit sweater","針織毛衣"],["lace details","蕾絲細節"],["layered necklaces","多層項鍊"],["layered outfit","層次穿搭"],["leather belt","皮帶"],["leather jacket","皮外套"],["loafers","樂福鞋"],["long coat","長大衣"],["long skirt","長裙"],["loose shirt","寬鬆襯衫"],["loose-fitting clothes","寬鬆服裝"],["loosened tie","鬆開的領帶"],["necktie","領帶"],["open shirt","敞開的襯衫"],["oversized sweater","寬鬆毛衣"],["pleated skirt","百褶裙"],["puffed sleeves","泡泡袖"],["rolled-up sleeves","捲起袖子"],["scarf","圍巾"],["school uniform","制服"],["shorts","短褲"],["silver jewelry","銀色飾品"],["sleeveless top","無袖上衣"],["sneakers","運動鞋"],["suit","西裝"],["tailored blazer","合身西裝外套"],["traditional Japanese clothing","日式傳統服裝"],["trench coat","風衣"],["turtleneck sweater","高領毛衣"],["waistcoat","西裝背心"],["white shirt","白襯衫"],["wide-leg pants","寬褲"]]],["表情",[["angry expression","生氣表情"],["annoyed expression","不耐煩表情"],["avoiding eye contact","避免眼神接觸"],["awkward smile","尷尬微笑"],["biting lower lip","輕咬下唇"],["blushing","臉紅"],["closed-mouth smile","閉嘴微笑"],["confident expression","自信表情"],["confused expression","困惑表情"],["curious expression","好奇表情"],["determined expression","堅定表情"],["embarrassed expression","尷尬害羞"],["eyes closed","閉眼"],["flustered expression","不知所措"],["forced smile","勉強的微笑"],["frowning","皺眉"],["furrowed brows","眉頭深鎖"],["gentle smile","溫柔微笑"],["half-lidded gaze","半瞇眼神"],["intense gaze","強烈眼神"],["laughing","大笑"],["looking at the viewer","看著觀者"],["looking away","把視線移開"],["looking directly at the viewer","直視觀者"],["looking down","低頭看"],["looking down shyly","害羞地低頭"],["looking up","抬眼看"],["melancholic expression","憂鬱表情"],["mischievous grin","調皮壞笑"],["one eye closed","單眼閉起"],["playful expression","俏皮表情"],["pouting","嘟嘴"],["sad expression","悲傷表情"],["serious expression","嚴肅表情"],["shocked expression","震驚表情"],["shy expression","害羞表情"],["sideways glance","側眼看"],["sleepy expression","睏倦表情"],["slightly parted lips","微微張開的嘴唇"],["smirk","戲謔的笑"],["smug expression","得意表情"],["subtle smile","淺淺微笑"],["surprised expression","驚訝表情"],["teary eyes","含淚眼睛"],["thoughtful expression","沉思表情"],["warm smile","溫暖微笑"],["wide smile","燦爛笑容"],["winking","眨一隻眼"],["wistful expression","惆悵表情"]]],["姿勢手部",[["adjusting a tie","整理領帶"],["adjusting glasses","調整眼鏡"],["arms crossed","雙手交叉抱胸"],["arms spread open","張開雙臂"],["body facing away, head turned back","身體背向鏡頭、頭部回望"],["chin slightly raised","下巴微抬"],["closed fist","握拳"],["contrapposto pose","重心偏移的自然站姿"],["crossed legs","雙腿交疊"],["crouching","蹲姿"],["dancing pose","舞蹈姿勢"],["embracing another person","擁抱另一人"],["fingertips touching","指尖相碰"],["hand brushing hair aside","用手撥開頭髮"],["hand covering mouth","手遮住嘴巴"],["hand covering one eye","手遮住一隻眼睛"],["hand gripping fabric","手抓著布料"],["hand on chest","手放在胸前"],["hand reaching toward camera","手朝鏡頭伸出"],["hand resting on cheek","手放在臉頰上"],["hand touching the face","手碰臉"],["hands behind back","雙手放在背後"],["hands behind head","雙手放在頭後"],["hands clasped together","雙手交握"],["hands in pockets","雙手插口袋"],["holding a bag","拿著包包"],["holding a book","拿著書"],["holding a camera","拿著相機"],["holding a cup","拿著杯子"],["holding a flower","拿著花"],["holding a phone","拿著手機"],["holding an umbrella","拿著雨傘"],["holding hands","牽手"],["holding own wrist","握住自己的手腕"],["interlaced fingers","十指交扣"],["interlocked fingers","手指緊扣"],["jumping","跳躍"],["kneeling","跪姿"],["kneeling on one knee","單膝跪地"],["leaning against a wall","靠牆"],["leaning forward","身體前傾"],["leaning on a railing","靠著欄杆"],["leaning on a table","靠著桌子"],["looking back","回頭看"],["looking down at another person","低頭看著另一人"],["looking over the shoulder","越肩回望"],["lying down","躺下"],["lying on the back","仰躺"],["lying on the side","側躺"],["lying on the stomach","趴著"],["one hand holding the other","一手握住另一手"],["one hand on the hip","一手叉腰"],["open palm","張開手掌"],["peace sign","V 字手勢"],["pointing gesture","指向手勢"],["reaching out a hand","伸出一隻手"],["relaxed hands","放鬆的手"],["resting chin on hand","手托下巴"],["running","跑步"],["sitting","坐著"],["sitting casually","隨性坐姿"],["sitting cross-legged","盤腿坐"],["sitting on a chair","坐在椅子上"],["sitting on the floor","坐在地板上"],["slightly tilted head","頭部微微傾斜"],["squatting","蹲坐"],["standing","站立"],["standing with relaxed posture","放鬆站姿"],["stretching arms","伸展雙臂"],["thumbs up","比讚"],["twisting torso","扭轉上半身"],["walking away","背向鏡頭走開"],["walking forward","向前走"]]],["鏡頭構圖",[["asymmetrical composition","不對稱構圖"],["back view","背面"],["bird's-eye view","鳥瞰視角"],["bokeh background","散景背景"],["camera at shoulder level","肩膀高度的鏡頭"],["camera at waist level","腰部高度的鏡頭"],["centered composition","中央構圖"],["close-up","特寫"],["close-up portrait","臉部近距離肖像"],["cowboy shot","大腿中段以上"],["deep depth of field","深景深"],["dutch angle","傾斜鏡頭"],["dynamic composition","動態構圖"],["establishing shot","建立場景的遠景"],["extreme close-up","極近特寫"],["eye-level view","平視"],["foreground blur","前景模糊"],["front view","正面"],["full body","全身"],["head-to-toe","從頭到腳完整入鏡"],["headroom","頭部上方留白"],["high-angle shot","高角度俯拍"],["landscape orientation","橫幅構圖"],["long shot","遠距離全景"],["low-angle shot","低角度仰拍"],["medium full shot","中全景"],["medium shot","中景"],["negative space","留白"],["off-center composition","偏離中央的構圖"],["over-the-shoulder view","越肩視角"],["portrait","人物肖像"],["portrait orientation","直幅構圖"],["profile view","正側面"],["rear three-quarter view","背面四分之三角度"],["rule of thirds composition","三分法構圖"],["shallow depth of field","淺景深"],["side view","側面"],["subject fills the frame","人物填滿畫面"],["symmetrical composition","對稱構圖"],["three-quarter view","四分之三側面"],["top-down view","從正上方往下看"],["uncropped full body","完整全身、不裁切"],["upper body","上半身"],["visible feet","腳部完整可見"],["wide shot","遠景"],["worm's-eye view","貼近地面的仰視"]]],["場景",[["amusement park","遊樂園"],["aquarium","水族館"],["art gallery","美術館"],["autumn park","秋日公園"],["bakery interior","麵包店內景"],["balcony at night","夜晚陽台"],["beach at sunset","夕陽海灘"],["bedroom interior","臥室內景"],["blurred background","模糊背景"],["bookstore","書店"],["botanical garden","植物園"],["cafe interior","咖啡廳內景"],["cherry blossom avenue","櫻花大道"],["city alley","城市巷弄"],["city at night","夜晚城市"],["convenience store at night","夜晚便利商店"],["cozy atmosphere","溫馨舒適氛圍"],["cozy reading nook","舒適閱讀角落"],["detailed background","細節豐富的背景"],["flower shop","花店"],["forest","森林"],["hotel room","飯店房間"],["Japanese street","日本街景"],["kitchen interior","廚房內景"],["lake shore","湖畔"],["library interior","圖書館內景"],["living room","客廳"],["lush garden","綠意庭園"],["minimalist room","極簡房間"],["modern apartment","現代公寓"],["mountain landscape","山景"],["music festival","音樂祭"],["neon-lit street","霓虹燈街道"],["night market","夜市"],["office interior","辦公室內景"],["peaceful atmosphere","平靜氛圍"],["plain white background","純白背景"],["rain-soaked pavement","被雨淋濕的路面"],["rainy day","雨天"],["record store","唱片行"],["romantic atmosphere","浪漫氛圍"],["rooftop at sunset","夕陽下的屋頂"],["school corridor","學校走廊"],["school rooftop","學校頂樓"],["seaside","海邊"],["shopping mall","購物中心"],["simple background","簡潔背景"],["slice of life","日常生活氛圍"],["snowy street","下雪街道"],["studio background","攝影棚背景"],["subway platform","地鐵月台"],["summer festival","夏日祭典"],["sunset sky","夕陽天空"],["train interior","電車內部"],["train station","車站"],["window light","窗邊光線"],["window with raindrops","有雨滴的窗戶"]]],["光線色彩",[["afternoon sunlight","午後陽光"],["ambient light","環境光"],["backlighting","逆光"],["backlit hair","逆光髮絲"],["black and gold palette","黑金配色"],["black and red palette","黑紅配色"],["candlelight","燭光"],["color harmony","色彩和諧"],["complementary colors","互補色"],["cool color palette","冷色調"],["cool lighting","冷色光"],["desaturated colors","低飽和色彩"],["diffused lighting","散射光"],["dramatic lighting","戲劇性光線"],["earth-tone palette","大地色系"],["fairy lights","串燈"],["falling leaves","落葉飄落"],["film grain","底片顆粒"],["floating dust particles","空氣中的浮塵"],["floating petals","飄落花瓣"],["foggy morning","有霧的早晨"],["glowing accents","發光點綴"],["god rays","光束效果"],["golden hour","黃金時刻光線"],["heavy rain","大雨"],["high contrast","高對比"],["high-key lighting","高調明亮光線"],["lavender and cream palette","薰衣草紫與奶油色配色"],["lens flare","鏡頭耀光"],["light rain","小雨"],["light trails","光軌"],["low-key lighting","低調暗光"],["misty atmosphere","薄霧氛圍"],["monochromatic palette","單色系配色"],["moonlight","月光"],["morning sunlight","晨間陽光"],["motion blur","動態模糊"],["muted colors","低飽和色彩"],["natural lighting","自然光"],["neon lighting","霓虹光"],["overcast daylight","陰天日光"],["pastel colors","粉彩色系"],["pastel pink palette","粉彩粉紅配色"],["reflected light","反射光"],["rim lighting","輪廓光"],["snow particles","雪花粒子"],["snowfall","降雪"],["soft bloom","柔和泛光"],["soft color transitions","柔和色彩過渡"],["soft focus effect","柔焦效果"],["soft lighting","柔和光線"],["soft shadows","柔和陰影"],["streetlight glow","路燈光暈"],["subtle highlights","細膩高光"],["sunset backlight","夕陽逆光"],["vibrant colors","鮮豔色彩"],["volumetric lighting","體積光"],["warm color palette","暖色調"],["warm highlights and cool shadows","暖色高光與冷色陰影"],["warm lighting","暖色光"],["wind-swept fabric","被風吹起的布料"]]],["雙人互動",[["background character","背景人物"],["both faces visible","兩人的臉都清楚可見"],["both hands visible","雙方的手都清楚可見"],["clear separation between characters","人物輪廓清楚分開"],["close conversation","靠近交談"],["distinct silhouettes","清楚區分的身形輪廓"],["facing each other","面對面"],["foreground character","前景人物"],["forehead touching forehead","額頭相抵"],["gentle embrace","溫柔擁抱"],["guiding someone by the hand","牽著對方的手引導"],["hand resting on the shoulder","手放在肩膀上"],["height difference","身高差"],["hugging from the front","正面擁抱"],["intimate distance","親近距離"],["leaning on someone's shoulder","靠在某人的肩上"],["left side of the frame","畫面左側"],["looking at each other","互相看著對方"],["looking down at the shorter person","低頭看較矮的人"],["looking up at the taller person","抬頭看較高的人"],["making eye contact","眼神交會"],["one person reaching for the other's hand","一人伸手牽另一人"],["one person sitting while the other stands","一人坐著，另一人站著"],["one person standing behind the other","一人站在另一人身後"],["personal space","人物之間的空間"],["playful interaction","俏皮互動"],["protective stance","保護性的站姿"],["resting head on shoulder","頭靠在肩上"],["right side of the frame","畫面右側"],["sitting side by side","並肩坐著"],["standing back to back","背靠背站立"],["standing close together","靠近站著"],["standing side by side","並肩站立"],["two people","兩個人"],["walking side by side","並肩走路"],["whispering into someone's ear","在對方耳邊低語"]]]];
+var GN=[["手部肢體",[["bad anatomy","人體結構錯誤"],["bad hands","手部錯誤"],["deformed body","變形的身體"],["extra fingers","多餘手指"],["extra limbs","多餘肢體"],["fused fingers","手指黏合"],["malformed hands","畸形的手"],["missing fingers","缺少手指"],["missing limbs","缺少肢體"],["unnatural pose","不自然姿勢"]]],["畫質畫風",[["3d render","3D 渲染"],["blurry","模糊"],["jpeg artifacts","JPEG 壓縮瑕疵"],["low quality","低品質"],["lowres","低解析度"],["painterly","厚塗／繪畫筆觸感"],["photorealistic","照片寫實風"],["realistic skin texture","寫實皮膚紋理"],["rough sketch","粗略草稿"],["watercolor","水彩風"],["worst quality","最差品質"]]],["臉部其他",[["asymmetrical eyes","不對稱眼睛"],["cropped head","頭部被裁切"],["deformed face","變形的臉"],["distorted facial features","扭曲的五官"],["duplicate","重複人物／物件"],["extra person","多出的人物"],["logo","標誌"],["multiple views","多視角拼圖"],["out of frame","超出畫面"],["poorly drawn eyes","眼睛繪製不佳"],["poorly drawn mouth","嘴巴繪製不佳"],["signature","簽名"],["text","文字"],["unnatural facial proportions","不自然的五官比例"],["watermark","浮水印"]]],["補充",[["bad perspective","透視錯誤"],["broken wrists","手腕結構錯誤"],["clothing artifacts","服裝瑕疵"],["cluttered background","背景雜亂"],["cropped feet","腳部被裁切"],["cropped hands","手部被裁切"],["cropped limbs","肢體被裁切"],["cross-eyed","鬥雞眼"],["deformed ears","耳朵變形"],["disproportionate body","身體比例失衡"],["distorted perspective","透視扭曲"],["duplicate face","重複臉部"],["excessive blur","過度模糊"],["extra arms","多出手臂"],["extra hands","多出手掌"],["extra legs","多出腿"],["extra toes","多餘腳趾"],["floating hands","手部漂浮／未連接"],["fused limbs","肢體黏合"],["inconsistent shadows","陰影不一致"],["multiple panels","多格畫面"],["overexposed","過曝"],["oversaturated","過度飽和"],["poor composition","構圖不佳"],["poorly drawn feet","腳部繪製不佳"],["speech bubble","對話框"],["twisted fingers","扭曲手指"],["underexposed","曝光不足"]]]];
+var B=[
+{t:"第一批：鏡位",fx:"white sweater, black pants, simple background, slight smile",items:[
+["正面特寫 A","face focus, close-up, front view, looking at viewer"],["正面特寫 B","face focus, close-up, front view, looking at viewer"],
+["三分之四側臉特寫 A","three-quarter view, face focus, close-up"],["三分之四側臉特寫 B","three-quarter view, face focus, close-up"],
+["側臉特寫","profile, face focus, close-up"],["俯視","from above, portrait"],["仰視","from below, portrait"],
+["正面半身","upper body, looking at viewer"],["側面半身","upper body, from side"],["全身","full body, standing"]]},
+{t:"第二批：表情",fx:"white sweater, black pants, simple background",items:[
+["微笑（特寫）","slight smile, close-up, looking at viewer"],["認真（半身）","serious, upper body, looking at viewer"],
+["大笑（特寫）","laughing, open mouth, close-up"],["閉眼（半身）","closed eyes, upper body"],
+["驚訝（特寫）","surprised, close-up"],["想睡（半身）","sleepy, half-closed eyes, upper body"],
+["看向別處（特寫）","looking away, close-up"],["輕微生氣（半身）","angry, upper body"]]},
+{t:"第三批：服裝與背景",fx:"slight smile",items:[
+["西裝＋室內（半身）","suit, white shirt, indoors, upper body"],["西裝＋街道（特寫）","suit, white shirt, city street, close-up"],
+["連帽衫＋咖啡廳（半身）","hoodie, cafe, upper body"],["連帽衫＋屋頂（全身）","hoodie, rooftop, full body"],
+["襯衫＋圖書館（特寫）","white shirt, library, close-up"],["襯衫＋夕陽（半身）","white shirt, sunset, upper body"],
+["外套＋街道（全身）","jacket, city street, full body"],["外套＋屋頂（特寫）","jacket, rooftop, close-up"],
+["西裝＋夕陽（特寫）","suit, white shirt, sunset, close-up"],["連帽衫＋室內（半身）","hoodie, indoors, upper body"],
+["外套＋咖啡廳（半身）","jacket, cafe, upper body"],["襯衫＋戶外（全身）","white shirt, outdoors, full body"]]}
+];
+var DEF=["masterpiece","best quality","1boy","solo","short hair","messy hair","longer hair at nape","pastel pink hair","grey eyes","half-closed eyes","pale skin","stud earrings","silver necklace","painterly","soft shading","detailed face"];
+var K="pixai-studio-v1",NEG="lowres, bad anatomy, bad hands, missing fingers, extra digits, blurry, watermark, text, signature, worst quality, jpeg artifacts";
+var S={name:"",sel:{},custom:[],fx:B.map(function(b){return b.fx}),done:{},step:1,neg:NEG};
+DEF.forEach(function(t){S.sel[t]=1});
+try{var r=localStorage.getItem(K);if(r){var o=JSON.parse(r);if(o&&o.sel){S=o;if(typeof S.neg!=="string")S.neg=NEG}}}catch(e){}
+function save(){try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}}
+var $=function(i){return document.getElementById(i)};
+function esc(s){return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;")}
+function list(s){return s.split(",").map(function(x){return x.trim()}).filter(Boolean)}
+function desc(){var o=[];G1.forEach(function(g){g[1].forEach(function(t){if(S.sel[t[0]]&&o.indexOf(t[0])<0)o.push(t[0])})});S.custom.forEach(function(t){if(o.indexOf(t)<0)o.push(t)});return o.join(", ")}
+function conflicts(){var n=list(S.neg),c=list(desc()).filter(function(t){return n.indexOf(t)>-1});
+var m=c.length?"負面詞裡也有："+c.join("、")+"，和角色描述互相衝突。":"";
+["cf1","cf2"].forEach(function(i){$(i).textContent=m;$(i).hidden=!m})}
+function fallback(t){var a=document.createElement("textarea");a.value=t;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(a)}
+function copy(t,b,l){var ok=function(){b.textContent="已複製";setTimeout(function(){b.textContent=l},1200)};
+try{navigator.clipboard.writeText(t).then(ok,function(){fallback(t);ok()})}catch(x){fallback(t);ok()}}
+function Picker(el,groups,isOn,toggle){
+el.innerHTML='<input type="text" class="q" placeholder="搜尋詞彙（中文或英文）" aria-label="搜尋詞彙"><div class="tabs"></div><div class="chips"></div>';
+var q=el.querySelector(".q"),tb=el.querySelector(".tabs"),ch=el.querySelector(".chips"),cur=0;
+function draw(){var s=q.value.trim().toLowerCase(),L,h="";
+if(s){L=[];groups.forEach(function(g){g[1].forEach(function(t){if((t[0]+" "+t[1]).toLowerCase().indexOf(s)>-1&&L.indexOf(t)<0)L.push(t)})});tb.hidden=true}
+else{tb.hidden=false;groups.forEach(function(g,i){var n=g[1].filter(function(t){return isOn(t[0])}).length;h+='<button class="tab" role="tab" data-i="'+i+'" aria-selected="'+(i===cur)+'">'+g[0]+(n?'<b>'+n+'</b>':'')+'</button>'});tb.innerHTML=h;L=groups[cur][1]}
+h="";L.forEach(function(t){h+='<button class="chip" data-t="'+esc(t[0])+'" aria-pressed="'+isOn(t[0])+'">'+esc(t[0])+'<small>'+t[1]+'</small></button>'});
+ch.innerHTML=h||'<p class="sub">找不到符合的詞</p>'}
+q.oninput=draw;
+tb.onclick=function(e){var b=e.target.closest(".tab");if(b){cur=+b.dataset.i;draw()}};
+ch.onclick=function(e){var b=e.target.closest(".chip");if(b){toggle(b.dataset.t);draw()}};
+draw();return draw}
+function flip(key,i,x){var a=list(i===null?S[key]:S[key][i]),k=a.indexOf(x);if(k>-1)a.splice(k,1);else a.push(x);return a.join(", ")}
+
+var p1=Picker($("pk1"),G1,function(t){return !!S.sel[t]},function(t){S.sel[t]=S.sel[t]?0:1;save();r1()});
+function r1(){var h="";S.custom.forEach(function(t,i){h+='<button class="chip x" data-x="'+i+'" aria-label="移除 '+esc(t)+'">'+esc(t)+' ×</button>'});$("cus").innerHTML=h;
+$("dv").value=desc();$("name").value=S.name;
+$("wn").hidden=!(S.sel["painterly"]&&(S.sel["flat color"]||S.sel["cel shading"]));conflicts();p1()}
+$("cus").onclick=function(e){var b=e.target.closest("[data-x]");if(!b)return;S.custom.splice(+b.dataset.x,1);save();r1()};
+$("add").onclick=function(){var v=$("cu").value.trim();if(v){S.custom.push(v);$("cu").value="";save();r1()}};
+$("cu").onkeydown=function(e){if(e.key==="Enter"){e.preventDefault();$("add").click()}};
+$("name").oninput=function(){S.name=this.value;save()};
+$("cpd").onclick=function(){copy(desc(),$("cpd"),"複製描述")};
+$("clrsel").onclick=function(){if(confirm("要清空所有選擇嗎？")){S.sel={};S.custom=[];save();r1()}};
+$("go").onclick=function(){show(2)};$("back").onclick=function(){show(1)};
+$("s1").onclick=function(){show(1)};$("s2").onclick=function(){show(2)};
+function show(n){S.step=n;save();$("p1").hidden=n!==1;$("p2").hidden=n!==2;$("s1").setAttribute("aria-selected",n===1);$("s2").setAttribute("aria-selected",n===2);if(n===2)r2();window.scrollTo(0,0)}
+
+var wrap=$("batches"),bh="",pk=[];
+B.forEach(function(b,i){bh+='<section><div class="bh"><h2>'+b.t+'</h2><span id="c'+i+'"></span></div><label class="f" for="fx'+i+'">本批固定條件（每張都會加上）</label><textarea id="fx'+i+'" class="fx" style="min-height:52px"></textarea><div class="row" style="margin-top:6px"><button class="btn" data-pk="'+i+'">＋ 從詞庫加入</button></div><div class="pkw" id="pk2-'+i+'" hidden></div><div id="l'+i+'"></div></section>'});
+wrap.innerHTML=bh;
+B.forEach(function(b,i){var t=$("fx"+i);t.value=S.fx[i];
+pk[i]=Picker($("pk2-"+i),G2,function(x){return list(S.fx[i]).indexOf(x)>-1},function(x){S.fx[i]=flip("fx",i,x);t.value=S.fx[i];save()});
+t.oninput=function(){S.fx[i]=t.value;save();pk[i]()}});
+function r2(){var tot=0,all=0;$("dprev").textContent=desc()||"（還沒選任何特徵）";$("nm").textContent=(S.name?S.name+"　":"")+"總進度";
+B.forEach(function(b,i){var d=0,x="";b.items.forEach(function(it,j){var id=i+"-"+j,on=!!S.done[id];if(on)d++;
+x+='<div class="item'+(on?' done':'')+'"><input type="checkbox" data-id="'+id+'" aria-label="'+it[0]+'"'+(on?' checked':'')+'><div class="tx"><b>'+it[0]+'</b><small>'+it[1]+'</small></div><button class="btn main" data-c="'+id+'">複製</button></div>'});
+$("l"+i).innerHTML=x;$("c"+i).textContent=d+" / "+b.items.length;tot+=d;all+=b.items.length});
+$("tot").textContent=tot+" / "+all;$("fill").style.width=(all?tot/all*100:0)+"%";conflicts()}
+wrap.onchange=function(e){var c=e.target;if(c.dataset.id){S.done[c.dataset.id]=c.checked;save();r2()}};
+wrap.onclick=function(e){var k=e.target.closest("[data-pk]");if(k){var w=$("pk2-"+k.dataset.pk);w.hidden=!w.hidden;return}
+var b=e.target.closest("[data-c]");if(!b)return;var p=b.dataset.c.split("-");
+copy([desc(),S.fx[+p[0]].trim(),B[+p[0]].items[+p[1]][1]].filter(Boolean).join(", "),b,"複製")};
+var ng=$("neg");ng.value=S.neg;
+var pn=Picker($("pk3"),GN,function(x){return list(S.neg).indexOf(x)>-1},function(x){S.neg=flip("neg",null,x);ng.value=S.neg;save();conflicts()});
+ng.oninput=function(){S.neg=ng.value;save();pn();conflicts()};
+$("cpn").onclick=function(){copy(S.neg,$("cpn"),"複製負面")};
+$("tgn").onclick=function(){var w=$("pk3");w.hidden=!w.hidden};
+$("reset").onclick=function(){if(Object.keys(S.done).length&&!confirm("要清空所有打勾嗎？"))return;S.done={};save();r2()};
+r1();show(S.step===2?2:1);
+</script>
+</body>
+</html>
